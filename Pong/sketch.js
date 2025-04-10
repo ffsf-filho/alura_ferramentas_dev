@@ -1,3 +1,8 @@
+let bolaImagem;
+let jogadorImagem;
+let computadorImagem;
+let fundoImagem;
+
 class Raquete{
     constructor(x, y, w, h) {
         this.x = x;
@@ -7,8 +12,15 @@ class Raquete{
     }
 
     show() {
-        fill(255);
-        rect(this.x, this.y, this.w, this.h);
+        //desenha a raquete com a imagem da raquete
+        if (this.x == 30) {         
+            image(jogadorImagem, this.x, this.y, this.w, this.h);
+        }
+        else {
+            image(computadorImagem, this.x, this.y, this.w, this.h);
+        }
+        //fill(255);
+        //rect(this.x, this.y, this.w, this.h);
     }
 
     move() {
@@ -48,11 +60,16 @@ class Bola {
         this.y = height / 2;
         this.xSpeed = Math.random() * 5 - 2.5;
         this.ySpeed = Math.random() * 5 - 2.5;
+        //angulo de rotacao atual da bola
+        this.angle = 0;
     }
 
     move() {
         this.x += this.xSpeed;
         this.y += this.ySpeed;
+        
+        //rotaciona de acordo com a velocidade x e y
+        this.angle += Math.sqrt(this.xSpeed * this.xSpeed + this.ySpeed * this.ySpeed) / 30;
 
         if (this.x > width - this.r || this.x < this.r) {
             this.reset();
@@ -83,8 +100,19 @@ class Bola {
     }
 
     show() {
-        fill(255);
-        ellipse(this.x, this.y, this.r, this.r);
+        //rotaciona antes de desenhar a bola
+        push();
+        translate(this.x, this.y);
+        rotate(this.angle);
+        //desenha a bola com a imagem da bola rotacionada
+        imageMode(CENTER);
+        image(bolaImagem, 0, 0, this.r, this.r);
+        pop();
+        
+        //desenha a bola com a imagem da bola
+        //image(bolaImagem, this.x - this.r/2, this.y - this.r/2, this.r, this.r);
+        ///fill(255);
+        //ellipse(this.x, this.y, this.r, this.r);
     }
 }
 
@@ -123,6 +151,14 @@ let bola;
 let jogador;
 let computador;
 
+function preload() {
+    // Precarrega a imagem da bola
+    bolaImagem = loadImage('bola.png');
+    jogadorImagem = loadImage('barra01.png');
+    computadorImagem = loadImage('barra02.png');
+    fundoImagem = loadImage('fundo2.png');
+}
+
 //Funcao setup do p5js
 function setup() {
     // Cria o canvas com largura e altura de 400 pixels
@@ -135,7 +171,9 @@ function setup() {
 //Funcao draw do p5js
 function draw() {
     // Limpa o canvas com a cor de fundo
-    background(0);
+    //background(0);
+    //desenha o fundo com a imagem do fundo
+    image(fundoImagem, 0, 0, width, height);
 
     bola.move();
     bola.show();
