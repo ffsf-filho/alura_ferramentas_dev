@@ -2,6 +2,10 @@ let bolaImagem;
 let jogadorImagem;
 let computadorImagem;
 let fundoImagem;
+let quicarSom;
+let golSom;
+let pontosJogador = 0;
+let pontosComputador = 0;
 
 class Raquete{
     constructor(x, y, w, h) {
@@ -72,6 +76,15 @@ class Bola {
         this.angle += Math.sqrt(this.xSpeed * this.xSpeed + this.ySpeed * this.ySpeed) / 30;
 
         if (this.x > width - this.r || this.x < this.r) {
+            if (this.x > width - this.r) {
+                pontosComputador++;
+            }
+            else {          
+                pontosJogador++;
+            }
+
+            golSom.play();
+            falaPontos();
             this.reset();
         }
 
@@ -81,6 +94,7 @@ class Bola {
 
         //colisão com a raquete
         if (this.x < jogador.x + jogador.w && this.x > jogador.x && this.y > jogador.y && this.y < jogador.y + jogador.h) {
+            quicarSom.play();
             this.xSpeed *= -1;
             this.xSpeed *= 1.1;
             this.ySpeed *= 1.1;
@@ -92,6 +106,7 @@ class Bola {
         //onde circulo é raio e cx,cy
         //e retângulo e x, y, w, h  
         if (colideCirculoRetangulo(this.x, this.y, this.r / 2, computador.x, computador.y, computador.w, computador.h)) {
+            quicarSom.play();
             this.xSpeed *= -1;
             this.xSpeed *= 1.1;
             this.ySpeed *= 1.1;             
@@ -151,12 +166,21 @@ let bola;
 let jogador;
 let computador;
 
+function falaPontos() {
+    let pontos ='Jogador' + pontosJogador + ' e Computador' + pontosComputador;
+    let falas = new SpeechSynthesisUtterance(pontos);
+    falas.lang = 'pt-BR';
+    window.speechSynthesis.speak(falas);
+}
+
 function preload() {
     // Precarrega a imagem da bola
     bolaImagem = loadImage('bola.png');
     jogadorImagem = loadImage('barra01.png');
     computadorImagem = loadImage('barra02.png');
     fundoImagem = loadImage('fundo2.png');
+    quicarSom = loadSound('446100__justinvoke__bounce.wav');
+    golSom = loadSound('274178__littlerobotsoundfactory__jingle_win_synth_02.wav');
 }
 
 //Funcao setup do p5js
